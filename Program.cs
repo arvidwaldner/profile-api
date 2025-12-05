@@ -16,6 +16,7 @@ builder.Services.AddScoped<IEducationsSortingService, EducationsSortingService>(
 builder.Services.AddScoped<ILanguageSkillsSortingService, LanguageSkillsSortingService>();
 builder.Services.AddScoped<ISkillAreasSortingService, SkillAreasSortingService>();
 
+//
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
