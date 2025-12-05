@@ -1,6 +1,6 @@
 namespace ProfileApi.Models;
 
-public class Experience
+public class WorkExperience
 {
     public string Company { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;
@@ -23,7 +23,7 @@ public class Experience
     public List<string> Testing { get; set; } = new();
 }
 
-public class ExperiencesData
+public class WorkExperiencesData
 {
-    public List<Experience> Experiences { get; set; } = new();
+    public List<WorkExperience> WorkExperiences { get; set; } = new();
 }

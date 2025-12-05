@@ -43,7 +43,7 @@ public class ProfileController : ControllerBase
     /// <summary>
     /// Get work experiences
     /// </summary>
-    [HttpGet("experiences")]
+    [HttpGet("work-experiences")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetExperiences()

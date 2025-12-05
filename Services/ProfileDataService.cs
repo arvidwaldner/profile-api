@@ -7,7 +7,7 @@ public interface IProfileDataService
 {
     Task<IndustryExperiencesData?> GetIndustryExperiencesAsync();
     Task<TechnicalSkillsData?> GetTechnicalSkillsAsync();
-    Task<ExperiencesData?> GetExperiencesAsync();
+    Task<WorkExperiencesData?> GetExperiencesAsync();
     Task<CertificationsData?> GetCertificationsAsync();
     Task<EducationsData?> GetEducationsAsync();
     Task<LanguageSkillsData?> GetLanguageSkillsAsync();
@@ -38,8 +38,8 @@ public class ProfileDataService : IProfileDataService
     public async Task<TechnicalSkillsData?> GetTechnicalSkillsAsync()
         => await ReadJsonFileAsync<TechnicalSkillsData>("tech-stacks.json");
 
-    public async Task<ExperiencesData?> GetExperiencesAsync()
-        => await ReadJsonFileAsync<ExperiencesData>("experiences.json");
+    public async Task<WorkExperiencesData?> GetExperiencesAsync()
+        => await ReadJsonFileAsync<WorkExperiencesData>("work-experiences.json");
 
     public async Task<CertificationsData?> GetCertificationsAsync()
         => await ReadJsonFileAsync<CertificationsData>("certifications.json");
