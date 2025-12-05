@@ -4,7 +4,7 @@ using ProfileApi.Services;
 namespace ProfileApi.Controllers;
 
 [ApiController]
-[Route("api")]
+[Route("profile/api")]
 public class ProfileController : ControllerBase
 {
     private readonly IProfileDataService _dataService;
