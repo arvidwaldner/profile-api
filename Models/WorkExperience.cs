@@ -1,6 +1,12 @@
 namespace ProfileApi.Models;
 
-public class WorkExperience
+public interface IWorkExperience
+{
+    string From { get; }
+    string To { get; }
+}
+
+public class WorkExperience : IWorkExperience
 {
     public string Company { get; set; } = string.Empty;
     public string Type { get; set; } = string.Empty;
@@ -21,9 +27,4 @@ public class WorkExperience
     public List<string> VersionControl { get; set; } = new();
     public List<string> Methodologies { get; set; } = new();
     public List<string> Testing { get; set; } = new();
-}
-
-public class WorkExperiencesData
-{
-    public List<WorkExperience> WorkExperiences { get; set; } = new();
 }

@@ -5,59 +5,99 @@ namespace ProfileApi.Services;
 
 public interface IProfileDataService
 {
-    Task<IndustryExperiencesData?> GetIndustryExperiencesAsync();
-    Task<TechnicalSkillsData?> GetTechnicalSkillsAsync();
-    Task<WorkExperiencesData?> GetExperiencesAsync();
-    Task<CertificationsData?> GetCertificationsAsync();
-    Task<EducationsData?> GetEducationsAsync();
-    Task<LanguageSkillsData?> GetLanguageSkillsAsync();
-    Task<ApplicationSkillsData?> GetApplicationSkillsAsync();
-    Task<TechDomainsData?> GetTechDomainsAsync();
-    Task<SkillAreasData?> GetSkillAreasAsync();
+    Task<List<IndustryExperience>?> GetIndustryExperiencesAsync();
+    Task<List<TechnicalSkill>?> GetTechnicalSkillsAsync();
+    Task<List<WorkExperience>?> GetExperiencesAsync();
+    Task<List<Certification>?> GetCertificationsAsync();
+    Task<List<Education>?> GetEducationsAsync();
+    Task<List<LanguageSkill>?> GetLanguageSkillsAsync();
+    Task<List<ApplicationSkill>?> GetApplicationSkillsAsync();
+    Task<List<TechDomain>?> GetTechDomainsAsync();
+    Task<List<SkillArea>?> GetSkillAreasAsync();
 }
 
 public class ProfileDataService : IProfileDataService
 {
     private readonly string _dataPath;
     private readonly ILogger<ProfileDataService> _logger;
+    private readonly ISkillSortingService _skillSortingService;
+    private readonly IWorkExperiencesSortingService _workExperiencesSortingService;
+    private readonly ICertificationsSortingService _certificationsSortingService;
+    private readonly IEducationsSortingService _educationsSortingService;
+    private readonly ILanguageSkillsSortingService _languageSkillsSortingService;
+    private readonly ISkillAreasSortingService _skillAreasSortingService;
     private readonly JsonSerializerOptions _jsonOptions;
 
-    public ProfileDataService(IWebHostEnvironment env, ILogger<ProfileDataService> logger)
+    public ProfileDataService(IWebHostEnvironment env, ISkillSortingService skillSortingService, IWorkExperiencesSortingService workExperiencesSortingService, ICertificationsSortingService certificationsSortingService, IEducationsSortingService educationsSortingService, ILanguageSkillsSortingService languageSkillsSortingService, ISkillAreasSortingService skillAreasSortingService, ILogger<ProfileDataService> logger)
     {
         _dataPath = Path.Combine(env.ContentRootPath, "data");
+        _skillSortingService = skillSortingService;
+        _workExperiencesSortingService = workExperiencesSortingService;
+        _certificationsSortingService = certificationsSortingService;
+        _educationsSortingService = educationsSortingService;
+        _languageSkillsSortingService = languageSkillsSortingService;
+        _skillAreasSortingService = skillAreasSortingService;
         _logger = logger;
         _jsonOptions = new JsonSerializerOptions
         {
-            PropertyNameCaseInsensitive = true
+            PropertyNameCaseInsensitive = true,
+            PropertyNamingPolicy = null
         };
     }
 
-    public async Task<IndustryExperiencesData?> GetIndustryExperiencesAsync()
-        => await ReadJsonFileAsync<IndustryExperiencesData>("industry-experiences.json");
+    public async Task<List<IndustryExperience>?> GetIndustryExperiencesAsync()
+    {
+        var data = await ReadJsonFileAsync<List<IndustryExperience>>("industry-experiences.json");
+        return data != null ? _skillSortingService.SortByDomainYearsAndLevel(data) : null;
+    }
 
-    public async Task<TechnicalSkillsData?> GetTechnicalSkillsAsync()
-        => await ReadJsonFileAsync<TechnicalSkillsData>("tech-stacks.json");
+    public async Task<List<TechnicalSkill>?> GetTechnicalSkillsAsync()
+    {
+        var data = await ReadJsonFileAsync<List<TechnicalSkill>>("tech-stacks.json");
+        return data != null ? _skillSortingService.SortByDomainYearsAndLevel(data) : null;
+    }
 
-    public async Task<WorkExperiencesData?> GetExperiencesAsync()
-        => await ReadJsonFileAsync<WorkExperiencesData>("work-experiences.json");
+    public async Task<List<WorkExperience>?> GetExperiencesAsync()
+    {
+        var data = await ReadJsonFileAsync<List<WorkExperience>>("work-experiences.json");
+        return data != null ? _workExperiencesSortingService.SortByFromDateDescending(data) : null;
+    }
 
-    public async Task<CertificationsData?> GetCertificationsAsync()
-        => await ReadJsonFileAsync<CertificationsData>("certifications.json");
+    public async Task<List<Certification>?> GetCertificationsAsync()
+    {
+        var data = await ReadJsonFileAsync<List<Certification>>("certifications.json");
+        return data != null ? _certificationsSortingService.SortByIssueDateDescending(data) : null;
+    }
 
-    public async Task<EducationsData?> GetEducationsAsync()
-        => await ReadJsonFileAsync<EducationsData>("educations.json");
+    public async Task<List<Education>?> GetEducationsAsync()
+    {
+        var data = await ReadJsonFileAsync<List<Education>>("educations.json");
+        return data != null ? _educationsSortingService.SortByYearDescending(data) : null;
+    }
 
-    public async Task<LanguageSkillsData?> GetLanguageSkillsAsync()
-        => await ReadJsonFileAsync<LanguageSkillsData>("language-skills.json");
+    public async Task<List<LanguageSkill>?> GetLanguageSkillsAsync()
+    {
+        var data = await ReadJsonFileAsync<List<LanguageSkill>>("language-skills.json");
+        return data != null ? _languageSkillsSortingService.SortByDomainAndProficiency(data) : null;
+    }
 
-    public async Task<ApplicationSkillsData?> GetApplicationSkillsAsync()
-        => await ReadJsonFileAsync<ApplicationSkillsData>("application-skills.json");
+    public async Task<List<ApplicationSkill>?> GetApplicationSkillsAsync()
+    {
+        var data = await ReadJsonFileAsync<List<ApplicationSkill>>("application-skills.json");
+        return data != null ? _skillSortingService.SortByDomainYearsAndLevel(data) : null;
+    }
 
-    public async Task<TechDomainsData?> GetTechDomainsAsync()
-        => await ReadJsonFileAsync<TechDomainsData>("tech-domains.json");
+    public async Task<List<TechDomain>?> GetTechDomainsAsync()
+    {
+        var data = await ReadJsonFileAsync<List<TechDomain>>("tech-domains.json");
+        return data != null ? _skillSortingService.SortByDomainYearsAndLevel(data) : null;
+    }
 
-    public async Task<SkillAreasData?> GetSkillAreasAsync()
-        => await ReadJsonFileAsync<SkillAreasData>("skill-areas-and-characteristics.json");
+    public async Task<List<SkillArea>?> GetSkillAreasAsync()
+    {
+        var data = await ReadJsonFileAsync<List<SkillArea>>("skill-areas-and-characteristics.json");
+        return data != null ? _skillAreasSortingService.SortBySalesPitchOrder(data) : null;
+    }
 
     private async Task<T?> ReadJsonFileAsync<T>(string fileName) where T : class
     {
