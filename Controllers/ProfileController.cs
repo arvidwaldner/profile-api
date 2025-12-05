@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using ProfileApi.Services;
 
 namespace ProfileApi.Controllers;
 
 [ApiController]
 [Route("profile/api")]
+[EnableRateLimiting("fixed")]
 public class ProfileController : ControllerBase
 {
     private readonly IProfileDataService _dataService;
@@ -22,6 +24,7 @@ public class ProfileController : ControllerBase
     [HttpGet("industry-experiences")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
     public async Task<IActionResult> GetIndustryExperiences()
     {
         var data = await _dataService.GetIndustryExperiencesAsync();
@@ -34,6 +37,7 @@ public class ProfileController : ControllerBase
     [HttpGet("tech-stacks")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
     public async Task<IActionResult> GetTechStacks()
     {
         var data = await _dataService.GetTechnicalSkillsAsync();
@@ -46,6 +50,7 @@ public class ProfileController : ControllerBase
     [HttpGet("work-experiences")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
     public async Task<IActionResult> GetExperiences()
     {
         var data = await _dataService.GetExperiencesAsync();
@@ -58,6 +63,7 @@ public class ProfileController : ControllerBase
     [HttpGet("certifications")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
     public async Task<IActionResult> GetCertifications()
     {
         var data = await _dataService.GetCertificationsAsync();
@@ -70,6 +76,7 @@ public class ProfileController : ControllerBase
     [HttpGet("educations")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
     public async Task<IActionResult> GetEducations()
     {
         var data = await _dataService.GetEducationsAsync();
@@ -82,6 +89,7 @@ public class ProfileController : ControllerBase
     [HttpGet("language-skills")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
     public async Task<IActionResult> GetLanguageSkills()
     {
         var data = await _dataService.GetLanguageSkillsAsync();
@@ -94,6 +102,7 @@ public class ProfileController : ControllerBase
     [HttpGet("application-skills")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
     public async Task<IActionResult> GetApplicationSkills()
     {
         var data = await _dataService.GetApplicationSkillsAsync();
@@ -106,6 +115,7 @@ public class ProfileController : ControllerBase
     [HttpGet("tech-domains")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
     public async Task<IActionResult> GetTechDomains()
     {
         var data = await _dataService.GetTechDomainsAsync();
@@ -118,6 +128,7 @@ public class ProfileController : ControllerBase
     [HttpGet("skill-areas")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status429TooManyRequests)]
     public async Task<IActionResult> GetSkillAreas()
     {
         var data = await _dataService.GetSkillAreasAsync();
