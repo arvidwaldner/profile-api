@@ -71,9 +71,7 @@ builder.Services.AddSwaggerGen(options =>
             },
             Array.Empty<string>()
         }
-    });
-
-    options.DocumentFilter<DevOnlyDocumentFilter>();
+    });    
 });
 
 builder.Services.AddRateLimiter(options =>
@@ -103,7 +101,7 @@ builder.Services.AddCors(options =>
             "https://localhost:5246"      // HTTPS variant
             // Add more origins here as needed
         )
-        .WithMethods("GET")               // Only allow GET requests
+        .WithMethods("GET", "POST")               
         .AllowAnyHeader();
     });
 });

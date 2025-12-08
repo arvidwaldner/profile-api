@@ -28,4 +28,9 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="SchemaFilters\Attributes\" />
+    <Folder Include="SchemaFilters\DocumentFilters\" />
+  </ItemGroup>
+
 </Project>
