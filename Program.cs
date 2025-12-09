@@ -96,12 +96,9 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowedOrigins", policy =>
     {
         policy.WithOrigins(
-            "https://arvidwaldner.github.io",
+            "https://arvidwaldner.github.io/profile-angular-app",
             "http://localhost:4200",      // Angular default dev port
-            "https://localhost:4200",     // HTTPS variant
-            "http://localhost:5246",      // API's own port (for Swagger)
-            "https://localhost:5246"      // HTTPS variant
-            // Add more origins here as needed
+            "https://localhost:4200"     // HTTPS variant            
         )
         .WithMethods("GET", "POST")               
         .AllowAnyHeader();
