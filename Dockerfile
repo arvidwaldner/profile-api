@@ -17,7 +17,9 @@ RUN dotnet restore ProfileApi.csproj
 COPY . .
 
 # Publish the app
+RUN ls -R /src
 RUN dotnet publish ProfileApi.csproj -c Release -o /app/publish
+RUN ls -R /app/publish
 
 # Stage 2: Runtime
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
