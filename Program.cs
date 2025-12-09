@@ -130,3 +130,5 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();
+Console.WriteLine($"ASPNETCORE_URLS: {Environment.GetEnvironmentVariable("ASPNETCORE_URLS")}");
+Console.WriteLine($"PORT: {Environment.GetEnvironmentVariable("PORT")}");
