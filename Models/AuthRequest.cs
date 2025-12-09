@@ -2,6 +2,7 @@
 {
     public class AuthRequest
     {
-        public string Key { get; set; }
+        public string Client { get; set; }
+        public string ApiKey { get; set; }
     }
 }

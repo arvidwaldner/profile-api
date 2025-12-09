@@ -19,7 +19,9 @@ builder.Services.AddScoped<ISkillAreasSortingService, SkillAreasSortingService>(
 
 var signingKey = builder.Configuration["Jwt:SigningKey"] ?? throw new InvalidOperationException("JWT signing key is not configured.");
 var issuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT issuer is not configured.");
-var audience = builder.Configuration["Jwt:Audience"] ?? throw new InvalidOperationException("JWT audience is not configured.");
+var audiences = builder.Configuration.GetSection("Jwt:Audiences").Get<string[]>()
+    ?? throw new InvalidOperationException("JWT audiences are not configured.");
+
 var signingKeyBytes = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -31,8 +33,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
+        ValidIssuer = issuer,
+        ValidAudiences = audiences,
         IssuerSigningKey = signingKeyBytes,
     };    
 });

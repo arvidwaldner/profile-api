@@ -20,24 +20,26 @@ namespace ProfileApi.Controllers
         [HttpPost]
         public IActionResult Login([FromBody] AuthRequest request)
         {
-            var validKey = _config["Jwt:SigningKey"];
-            if (request.Key == validKey)
+            var validKey = _config["ApiKey"];
+            var audiences = _config.GetSection("Jwt:Audiences").Get<string[]>();
+            if (request.ApiKey == validKey && audiences.Contains(request.Client))
             {
-                var token = GenerateToken();
+                var token = GenerateToken(request.Client);
                 return Ok(new { access_token = token });
             }
             return Unauthorized();
         }
 
-        private string GenerateToken()
+        private string GenerateToken(string audience)
         {
             var signingKey = _config["Jwt:SigningKey"];
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+            var issuer = _config["Jwt:Issuer"];
 
             var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
+                issuer: issuer,
+                audience: audience,
                 claims: new[] { new Claim("sub", "testuser") },
                 expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: credentials);
