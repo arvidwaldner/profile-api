@@ -20,6 +20,11 @@ public class ProfileController : ControllerBase
         _logger = logger;
     }
 
+    [AllowAnonymous]
+    [HttpGet("health")]
+    public IActionResult Health() => Ok("API is running");
+
+
     /// <summary>
     /// Get industry experiences
     /// </summary>
