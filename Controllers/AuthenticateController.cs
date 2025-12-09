@@ -10,7 +10,7 @@ using System.Text;
 namespace ProfileApi.Controllers
 {
     [EnableRateLimiting("fixed")]
-    [Route("api/authenticate")]
+    [Route("profile/api/authenticate")]
     [ApiController]
     public class AuthenticateController : ControllerBase
     {
