@@ -129,6 +129,6 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
 app.Run();
-Console.WriteLine($"ASPNETCORE_URLS: {Environment.GetEnvironmentVariable("ASPNETCORE_URLS")}");
-Console.WriteLine($"PORT: {Environment.GetEnvironmentVariable("PORT")}");
