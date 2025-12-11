@@ -27,5 +27,8 @@ WORKDIR /app
 COPY --from=build /app/publish .
 EXPOSE 8080
 ENV ASPNETCORE_ENVIRONMENT=Production
-ENV ASPNETCORE_URLS=http://*:$PORT
-ENTRYPOINT ["dotnet", "ProfileApi.dll"]
+#ENV ASPNETCORE_URLS=http://*:$PORT
+#CMD ASPNETCORE_URLS="http://*:$PORT" dotnet ProfileApi.dll
+#ENTRYPOINT ["dotnet", "ProfileApi.dll"]
+ENTRYPOINT ["sh", "-c", "ASPNETCORE_URLS=http://*:$PORT dotnet ProfileApi.dll"]
+
