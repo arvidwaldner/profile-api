@@ -135,10 +135,12 @@ app.UseAuthorization();
 app.MapControllers();
 
 // Log all endpoints
+Console.WriteLine("Mapped endpoints:");
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 foreach (var endpoint in app.Services.GetRequiredService<Microsoft.AspNetCore.Routing.EndpointDataSource>().Endpoints)
 {
     logger.LogInformation("Mapped endpoint: {Endpoint}", endpoint.DisplayName);
 }
+Console.WriteLine("Mapped endpoints DONE:");
 
 app.Run();
