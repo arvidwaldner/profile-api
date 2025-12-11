@@ -136,11 +136,14 @@ app.MapControllers();
 
 // Log all endpoints
 Console.WriteLine("Mapped endpoints:");
-var logger = app.Services.GetRequiredService<ILogger<Program>>();
-foreach (var endpoint in app.Services.GetRequiredService<Microsoft.AspNetCore.Routing.EndpointDataSource>().Endpoints)
+app.Lifetime.ApplicationStarted.Register(() =>
 {
-    logger.LogInformation("Mapped endpoint: {Endpoint}", endpoint.DisplayName);
-}
+    var logger = app.Services.GetRequiredService<ILogger<Program>>();
+    var endpointDataSource = app.Services.GetRequiredService<Microsoft.AspNetCore.Routing.EndpointDataSource>();
+    foreach (var endpoint in endpointDataSource.Endpoints)
+    {
+        logger.LogInformation("Mapped endpoint: {Endpoint}", endpoint.DisplayName);
+    }
+});
 Console.WriteLine("Mapped endpoints DONE:");
-
 app.Run();
