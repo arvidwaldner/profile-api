@@ -134,5 +134,12 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 
+// Log all endpoints
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
+foreach (var endpoint in app.Services.GetRequiredService<Microsoft.AspNetCore.Routing.EndpointDataSource>().Endpoints)
+{
+    logger.LogInformation("Mapped endpoint: {Endpoint}", endpoint.DisplayName);
+}
+
+logger = app.Services.GetRequiredService<ILogger<Program>>();
 app.Run();
