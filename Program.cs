@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
+Console.WriteLine($"ASPNETCORE_URLS: {Environment.GetEnvironmentVariable("ASPNETCORE_URLS")}");
+Console.WriteLine($"PORT: {Environment.GetEnvironmentVariable("PORT")}");
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
