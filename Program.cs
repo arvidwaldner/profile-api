@@ -141,5 +141,4 @@ foreach (var endpoint in app.Services.GetRequiredService<Microsoft.AspNetCore.Ro
     logger.LogInformation("Mapped endpoint: {Endpoint}", endpoint.DisplayName);
 }
 
-logger = app.Services.GetRequiredService<ILogger<Program>>();
 app.Run();
