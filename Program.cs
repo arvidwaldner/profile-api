@@ -6,10 +6,6 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
-Console.WriteLine($"ASPNETCORE_URLS: {Environment.GetEnvironmentVariable("ASPNETCORE_URLS")}");
-Console.WriteLine($"PORT: {Environment.GetEnvironmentVariable("PORT")}");
-
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -23,8 +19,12 @@ builder.Services.AddScoped<ISkillAreasSortingService, SkillAreasSortingService>(
 
 var signingKey = builder.Configuration["Jwt:SigningKey"] ?? throw new InvalidOperationException("JWT signing key is not configured.");
 var issuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT issuer is not configured.");
-var audiences = builder.Configuration.GetSection("Jwt:Audiences").Get<string[]>()
-    ?? throw new InvalidOperationException("JWT audiences are not configured.");
+
+var audiences = builder.Configuration.GetSection("Jwt:Audiences").Get<string[]>();
+Console.WriteLine("Loaded audiences: " + string.Join(", ", audiences ?? Array.Empty<string>()));
+
+//audiences = builder.Configuration.GetSection("Jwt:Audiences").Get<string[]>()
+//    ?? throw new InvalidOperationException("JWT audiences are not configured.");
 
 var signingKeyBytes = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
 
