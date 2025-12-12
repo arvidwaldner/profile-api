@@ -19,14 +19,9 @@ builder.Services.AddScoped<ISkillAreasSortingService, SkillAreasSortingService>(
 
 var signingKey = builder.Configuration["Jwt:SigningKey"] ?? throw new InvalidOperationException("JWT signing key is not configured.");
 var issuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT issuer is not configured.");
-
-Console.WriteLine("Jwt__Audiences env: " + Environment.GetEnvironmentVariable("Jwt__Audiences"));
-var audiences = builder.Configuration.GetSection("Jwt:Audiences").Get<string[]>();
-Console.WriteLine("Loaded audiences: " + string.Join(", ", audiences ?? Array.Empty<string>()));
-
-//audiences = builder.Configuration.GetSection("Jwt:Audiences").Get<string[]>()
-//    ?? throw new InvalidOperationException("JWT audiences are not configured.");
-
+var audiencesEnv = Environment.GetEnvironmentVariable("Jwt__Audiences")
+    ?? throw new InvalidOperationException("Audiences are not set as environment variables");
+var audiences = audiencesEnv.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 var signingKeyBytes = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -101,8 +96,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowedOrigins", policy =>
     {
         policy.WithOrigins(
-            "https://arvidwaldner.github.io/profile-angular-app",
-            "http://localhost:4200",      // Angular default dev port
+            "https://arvidwaldner.github.io/profile-angular-app",            
             "https://localhost:4200"     // HTTPS variant            
         )
         .WithMethods("GET", "POST")               
@@ -134,25 +128,4 @@ app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
-
-// Log all endpoints
-Console.WriteLine("Mapped endpoints:");
-app.Lifetime.ApplicationStarted.Register(() =>
-{
-    var logger = app.Services.GetRequiredService<ILogger<Program>>();
-    var endpointDataSource = app.Services.GetRequiredService<EndpointDataSource>();
-    foreach (var endpoint in endpointDataSource.Endpoints)
-    {
-        var routeEndpoint = endpoint as RouteEndpoint;
-        if (routeEndpoint != null)
-        {
-            logger.LogInformation("Mapped route: {RoutePattern} ({DisplayName})", routeEndpoint.RoutePattern.RawText, endpoint.DisplayName);
-        }
-        else
-        {
-            logger.LogInformation("Mapped endpoint: {DisplayName}", endpoint.DisplayName);
-        }
-    }
-});
-Console.WriteLine("Mapped endpoints DONE:");
 app.Run();
