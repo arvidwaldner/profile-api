@@ -19,9 +19,22 @@ builder.Services.AddScoped<ISkillAreasSortingService, SkillAreasSortingService>(
 
 var signingKey = builder.Configuration["Jwt:SigningKey"] ?? throw new InvalidOperationException("JWT signing key is not configured.");
 var issuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT issuer is not configured.");
-var audiencesEnv = Environment.GetEnvironmentVariable("Jwt__Audiences")
-    ?? throw new InvalidOperationException("Audiences are not set as environment variables");
-var audiences = audiencesEnv.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+// Try to get audiences from configuration (works for secrets.json, appsettings.json, and env vars if no array in file)
+var audiences = builder.Configuration.GetSection("Jwt:Audiences").Get<string[]>();
+
+// If not found, try to get from environment variable directly (handles the array override quirk)
+if (audiences == null || audiences.Length == 0)
+{
+    var audiencesEnv = Environment.GetEnvironmentVariable("Jwt__Audiences");
+    if (!string.IsNullOrWhiteSpace(audiencesEnv))
+    {
+        audiences = audiencesEnv.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+    }
+}
+
+if (audiences == null || audiences.Length == 0)
+    throw new InvalidOperationException("JWT audiences are not configured.");
+
 var signingKeyBytes = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
