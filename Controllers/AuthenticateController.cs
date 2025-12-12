@@ -20,12 +20,17 @@ namespace ProfileApi.Controllers
         [HttpPost]
         public IActionResult Login([FromBody] AuthRequest request)
         {
-            var validKey = _config["ApiKey"];
-            var audiences = _config.GetSection("Jwt:Audiences").Get<string[]>();
-            if (request.ApiKey == validKey && audiences.Contains(request.Client))
+            var apiKeysSection = _config.GetSection("ApiKeys");
+            var apiKeys = apiKeysSection.GetChildren().ToDictionary(x => x.Key, x => x.Value);
+
+            if (apiKeys.TryGetValue(request.Client, out var expectedApiKey) && request.ApiKey == expectedApiKey)
             {
-                var token = GenerateToken(request.Client);
-                return Ok(new { access_token = token });
+                var audiences = _config.GetSection("Jwt:Audiences").Get<string[]>();
+                if (audiences.Contains(request.Client))
+                {
+                    var token = GenerateToken(request.Client);
+                    return Ok(new { access_token = token });
+                }
             }
             return Unauthorized();
         }
