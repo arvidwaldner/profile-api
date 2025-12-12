@@ -139,10 +139,18 @@ Console.WriteLine("Mapped endpoints:");
 app.Lifetime.ApplicationStarted.Register(() =>
 {
     var logger = app.Services.GetRequiredService<ILogger<Program>>();
-    var endpointDataSource = app.Services.GetRequiredService<Microsoft.AspNetCore.Routing.EndpointDataSource>();
+    var endpointDataSource = app.Services.GetRequiredService<EndpointDataSource>();
     foreach (var endpoint in endpointDataSource.Endpoints)
     {
-        logger.LogInformation("Mapped endpoint: {Endpoint}", endpoint.DisplayName);
+        var routeEndpoint = endpoint as RouteEndpoint;
+        if (routeEndpoint != null)
+        {
+            logger.LogInformation("Mapped route: {RoutePattern} ({DisplayName})", routeEndpoint.RoutePattern.RawText, endpoint.DisplayName);
+        }
+        else
+        {
+            logger.LogInformation("Mapped endpoint: {DisplayName}", endpoint.DisplayName);
+        }
     }
 });
 Console.WriteLine("Mapped endpoints DONE:");
