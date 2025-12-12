@@ -20,6 +20,7 @@ builder.Services.AddScoped<ISkillAreasSortingService, SkillAreasSortingService>(
 var signingKey = builder.Configuration["Jwt:SigningKey"] ?? throw new InvalidOperationException("JWT signing key is not configured.");
 var issuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT issuer is not configured.");
 
+Console.WriteLine("Jwt__Audiences env: " + Environment.GetEnvironmentVariable("Jwt__Audiences"));
 var audiences = builder.Configuration.GetSection("Jwt:Audiences").Get<string[]>();
 Console.WriteLine("Loaded audiences: " + string.Join(", ", audiences ?? Array.Empty<string>()));
 
