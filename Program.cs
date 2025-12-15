@@ -22,7 +22,7 @@ builder.Services.AddScoped<ISkillAreasSortingService, SkillAreasSortingService>(
 // Bind configuration to ConfigurationSetup instance
 var configSetup = builder.Configuration.Get<ConfigurationSetup>() ?? new ConfigurationSetup();
 
-// Register as singleton for direct injection -
+// Register as singleton for direct injection
 builder.Services.AddSingleton<IConfigurationSetup>(configSetup);
 
 Console.WriteLine("ApiKeys loaded: " + string.Join(", ", configSetup.ApiKeys?.Select(kvp => $"{kvp.Key}={kvp.Value}") ?? new[] { "null" }));
