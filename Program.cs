@@ -5,6 +5,8 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using ProfileApi.Configurations;
+using Microsoft.Extensions.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,25 +19,35 @@ builder.Services.AddScoped<IEducationsSortingService, EducationsSortingService>(
 builder.Services.AddScoped<ILanguageSkillsSortingService, LanguageSkillsSortingService>();
 builder.Services.AddScoped<ISkillAreasSortingService, SkillAreasSortingService>();
 
-var signingKey = builder.Configuration["Jwt:SigningKey"] ?? throw new InvalidOperationException("JWT signing key is not configured.");
-var issuer = builder.Configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("JWT issuer is not configured.");
-// Try to get audiences from configuration (works for secrets.json, appsettings.json, and env vars if no array in file)
-var audiences = builder.Configuration.GetSection("Jwt:Audiences").Get<string[]>();
+// Bind configuration to ConfigurationSetup instance
+var configSetup = builder.Configuration.Get<ConfigurationSetup>() ?? new ConfigurationSetup();
 
-// If not found, try to get from environment variable directly (handles the array override quirk)
-if (audiences == null || audiences.Length == 0)
+// Register as singleton for direct injection
+builder.Services.AddSingleton<IConfigurationSetup>(configSetup);
+
+ValidateConfiguration(configSetup);
+void ValidateConfiguration(ConfigurationSetup config)
 {
-    var audiencesEnv = Environment.GetEnvironmentVariable("Jwt__Audiences");
-    if (!string.IsNullOrWhiteSpace(audiencesEnv))
-    {
-        audiences = audiencesEnv.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-    }
+    if (config.Jwt == null)
+        throw new InvalidOperationException("Jwt configuration section is missing.");
+
+    if (string.IsNullOrWhiteSpace(config.Jwt.Issuer) || string.Equals(config.Jwt.Issuer, "your-issuer-here", StringComparison.OrdinalIgnoreCase))
+        throw new InvalidOperationException("Jwt.Issuer is not set or is a placeholder.");
+
+    if (string.IsNullOrWhiteSpace(config.Jwt.SigningKey) || string.Equals(config.Jwt.SigningKey == "your-signing-key-here", StringComparison.OrdinalIgnoreCase))
+        throw new InvalidOperationException("Jwt.SigningKey is not set or is a placeholder.");
+
+    if (config.Jwt.Audiences == null || !config.Jwt.Audiences.Any()) 
+        throw new InvalidOperationException("Jwt.Audiences are missing");
+
+    if (config.ApiKeys == null || !config.ApiKeys.Any() || config.ApiKeys.Values.Any(v => string.IsNullOrWhiteSpace(v) || v == "your-service-api-key-here"))
+        throw new InvalidOperationException("ApiKeys are not set or contain a placeholder.");
+
+    if(config.AudienceApiKeyMap == null || !config.AudienceApiKeyMap.Any())
+        throw new InvalidOperationException("AudienceApiKeyMap is missing or empty.");    
 }
 
-if (audiences == null || audiences.Length == 0)
-    throw new InvalidOperationException("JWT audiences are not configured.");
-
-var signingKeyBytes = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(signingKey));
+var signingKeyBytes = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configSetup.Jwt.SigningKey));
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
@@ -46,8 +58,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = issuer,
-        ValidAudiences = audiences,
+        ValidIssuer = configSetup.Jwt.Issuer,
+        ValidAudiences = configSetup.Jwt.Audiences,
         IssuerSigningKey = signingKeyBytes,
     };    
 });
