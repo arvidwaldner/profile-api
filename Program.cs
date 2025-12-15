@@ -25,9 +25,6 @@ var configSetup = builder.Configuration.Get<ConfigurationSetup>() ?? new Configu
 // Register as singleton for direct injection
 builder.Services.AddSingleton<IConfigurationSetup>(configSetup);
 
-Console.WriteLine("ApiKeys loaded: " + string.Join(", ", configSetup.ApiKeys?.Select(kvp => $"{kvp.Key}={kvp.Value}") ?? new[] { "null" }));
-
-
 ValidateConfiguration(configSetup);
 void ValidateConfiguration(ConfigurationSetup config)
 {
