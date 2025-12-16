@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using ProfileApi.Configurations;
 using Microsoft.Extensions.Configuration;
+using ProfileApi.Filters;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,7 @@ builder.Services.AddScoped<ICertificationsSortingService, CertificationsSortingS
 builder.Services.AddScoped<IEducationsSortingService, EducationsSortingService>();
 builder.Services.AddScoped<ILanguageSkillsSortingService, LanguageSkillsSortingService>();
 builder.Services.AddScoped<ISkillAreasSortingService, SkillAreasSortingService>();
+builder.Services.AddScoped<IAuthenticateService, AuthenticateService>();
 
 // Bind configuration to ConfigurationSetup instance
 var configSetup = builder.Configuration.Get<ConfigurationSetup>() ?? new ConfigurationSetup();
@@ -132,8 +134,13 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {
-        options.JsonSerializerOptions.PropertyNamingPolicy = null; // Use PascalCase
+        options.JsonSerializerOptions.PropertyNamingPolicy = null; // Use PascalCase        
     });
+
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<ApiExceptionFilter>();
+});
 
 var app = builder.Build();
 
